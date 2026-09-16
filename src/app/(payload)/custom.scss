@@ -1,0 +1,3 @@
+/* Payload admin SCSS overrides.
+   Tailwind v4 and shadcn tokens live in payload-admin.css because Sass cannot parse
+   Tailwind v4 at-rules such as @theme and @utility. */
