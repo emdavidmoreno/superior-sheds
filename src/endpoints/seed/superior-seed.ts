@@ -113,7 +113,7 @@ export async function seedSuperior({
   }
 
   payload.logger.info('— Colors...')
-  const colorIds: Array<string | number> = []
+  const colorIds: number[] = []
   for (const color of colorSeedData) {
     const doc = await payload.create({
       req,
@@ -175,9 +175,12 @@ export async function seedSuperior({
       locale: 'en',
     })
 
-    const withIds = (rows: Array<{ id?: string }> | null | undefined, localized: Array<{ label: string; value: string }>) =>
+    const withIds = (
+      rows: Array<{ id?: string | null }> | null | undefined,
+      localized: Array<{ label: string; value: string }>,
+    ) =>
       (rows || []).map((row, i) => ({
-        id: row.id,
+        id: row.id ?? undefined,
         label: localized[i]?.label,
         value: localized[i]?.value,
       }))
@@ -904,15 +907,15 @@ function lexicalPlainText(text: string) {
               version: 1,
             },
           ],
-          direction: 'ltr',
-          format: '',
+          direction: 'ltr' as const,
+          format: '' as const,
           indent: 0,
           textFormat: 0,
           version: 1,
         },
       ],
-      direction: 'ltr',
-      format: '',
+      direction: 'ltr' as const,
+      format: '' as const,
       indent: 0,
       version: 1,
     },
