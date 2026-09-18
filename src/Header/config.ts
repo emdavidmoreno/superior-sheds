@@ -10,6 +10,17 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: 'phone',
+      type: 'text',
+      defaultValue: '877-439-7433',
+    },
+    {
+      name: 'quoteLabel',
+      type: 'text',
+      localized: true,
+      defaultValue: 'Get a quote',
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
@@ -17,7 +28,7 @@ export const Header: GlobalConfig = {
           appearances: false,
         }),
       ],
-      maxRows: 6,
+      maxRows: 8,
       admin: {
         initCollapsed: true,
         components: {

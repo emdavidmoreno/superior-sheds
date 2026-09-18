@@ -68,14 +68,15 @@ export interface Config {
   blocks: {};
   collections: {
     pages: Page;
-    posts: Post;
+    products: Product;
+    'product-options': ProductOption;
+    colors: Color;
+    locations: Location;
     media: Media;
-    categories: Category;
     users: User;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
-    search: Search;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-folders': FolderInterface;
@@ -90,14 +91,15 @@ export interface Config {
   };
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'product-options': ProductOptionsSelect<false> | ProductOptionsSelect<true>;
+    colors: ColorsSelect<false> | ColorsSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
-    search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -108,16 +110,18 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'es') | ('en' | 'es')[];
   globals: {
     header: Header;
     footer: Footer;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'es';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -180,15 +184,10 @@ export interface Page {
           link: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
-            reference?:
-              | ({
-                  relationTo: 'pages';
-                  value: number | Page;
-                } | null)
-              | ({
-                  relationTo: 'posts';
-                  value: number | Post;
-                } | null);
+            reference?: {
+              relationTo: 'pages';
+              value: number | Page;
+            } | null;
             url?: string | null;
             label: string;
             /**
@@ -201,7 +200,20 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | HeroVideoBlock
+    | TrustMarqueeBlock
+    | ProductShowcaseBlock
+    | WhyGridBlock
+    | FinancingBandBlock
+    | RegionGridBlock
+    | GalleryGridBlock
+    | FaqListBlock
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | FormBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -211,56 +223,6 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: number;
-  title: string;
-  heroImage?: (number | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  authors?: (number | User)[] | null;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -391,53 +353,139 @@ export interface FolderInterface {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
+ * via the `definition` "HeroVideoBlock".
  */
-export interface Category {
-  id: number;
+export interface HeroVideoBlock {
+  kicker?: string | null;
   title: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  parent?: (number | null) | Category;
-  breadcrumbs?:
+  subtitle?: string | null;
+  videoUrl?: string | null;
+  poster?: (number | null) | Media;
+  links?:
     | {
-        doc?: (number | null) | Category;
-        url?: string | null;
-        label?: string | null;
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroVideo';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "TrustMarqueeBlock".
  */
-export interface User {
-  id: number;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
+export interface TrustMarqueeBlock {
+  items: {
+    label: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'trustMarquee';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductShowcaseBlock".
+ */
+export interface ProductShowcaseBlock {
+  title?: string | null;
+  subtitle?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyGridBlock".
+ */
+export interface WhyGridBlock {
+  title?: string | null;
+  subtitle?: string | null;
+  items?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        number: string;
+        title: string;
+        body: string;
+        id?: string | null;
       }[]
     | null;
-  password?: string | null;
-  collection: 'users';
+  ctaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'whyGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinancingBandBlock".
+ */
+export interface FinancingBandBlock {
+  kicker?: string | null;
+  title?: string | null;
+  body?: string | null;
+  ctaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'financingBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RegionGridBlock".
+ */
+export interface RegionGridBlock {
+  title?: string | null;
+  ctaLabel?: string | null;
+  regions?:
+    | {
+        name: string;
+        cities: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'regionGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryGridBlock".
+ */
+export interface GalleryGridBlock {
+  title?: string | null;
+  intro?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'galleryGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqListBlock".
+ */
+export interface FaqListBlock {
+  title?: string | null;
+  items?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faqList';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -464,15 +512,10 @@ export interface CallToActionBlock {
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
           url?: string | null;
           label: string;
           /**
@@ -514,15 +557,10 @@ export interface ContentBlock {
         link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
           url?: string | null;
           label: string;
           /**
@@ -546,40 +584,6 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock".
- */
-export interface ArchiveBlock {
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
-  categories?: (number | Category)[] | null;
-  limit?: number | null;
-  selectedDocs?:
-    | {
-        relationTo: 'posts';
-        value: number | Post;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'archive';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -774,6 +778,177 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  category: string;
+  short?: string | null;
+  blurb?: string | null;
+  heroImage?: (number | null) | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  basePrice: number;
+  pricePerSqFt: number;
+  showPrice?: boolean | null;
+  sortOrder?: number | null;
+  sizes?:
+    | {
+        /**
+         * e.g. 8×12
+         */
+        label: string;
+        sqft: number;
+        id?: string | null;
+      }[]
+    | null;
+  quickSpecs?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  fullSpecs?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  options?: (number | ProductOption)[] | null;
+  colors?: (number | Color)[] | null;
+  published?: boolean | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-options".
+ */
+export interface ProductOption {
+  id: number;
+  label: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  price: number;
+  /**
+   * Products that offer this add-on.
+   */
+  products?: (number | Product)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colors".
+ */
+export interface Color {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  group: 'aluminum' | 'vinyl' | 'permaTile' | 'advantagePanel' | 'shingles' | 'woodStucco';
+  /**
+   * Optional hex swatch (e.g. #F5A524)
+   */
+  hex?: string | null;
+  swatch?: (number | null) | Media;
+  products?: (number | Product)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  type: 'factory' | 'retail' | 'dealer';
+  region: 'central' | 'north' | 'tampaBay' | 'southGulf';
+  address?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  mapImage?: (number | null) | Media;
+  esSpoken?: boolean | null;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -784,15 +959,10 @@ export interface Redirect {
   from: string;
   to?: {
     type?: ('reference' | 'custom') | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
     url?: string | null;
   };
   updatedAt: string;
@@ -809,37 +979,6 @@ export interface FormSubmission {
     | {
         field: string;
         value: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "search".
- */
-export interface Search {
-  id: number;
-  title?: string | null;
-  priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
-  slug?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (number | null) | Media;
-  };
-  categories?:
-    | {
-        relationTo?: string | null;
-        categoryID?: string | null;
-        title?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -967,16 +1106,24 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
-        relationTo: 'posts';
-        value: number | Post;
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'product-options';
+        value: number | ProductOption;
+      } | null)
+    | ({
+        relationTo: 'colors';
+        value: number | Color;
+      } | null)
+    | ({
+        relationTo: 'locations';
+        value: number | Location;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'categories';
-        value: number | Category;
       } | null)
     | ({
         relationTo: 'users';
@@ -993,10 +1140,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
-      } | null)
-    | ({
-        relationTo: 'search';
-        value: number | Search;
       } | null)
     | ({
         relationTo: 'payload-folders';
@@ -1075,10 +1218,17 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        heroVideo?: T | HeroVideoBlockSelect<T>;
+        trustMarquee?: T | TrustMarqueeBlockSelect<T>;
+        productShowcase?: T | ProductShowcaseBlockSelect<T>;
+        whyGrid?: T | WhyGridBlockSelect<T>;
+        financingBand?: T | FinancingBandBlockSelect<T>;
+        regionGrid?: T | RegionGridBlockSelect<T>;
+        galleryGrid?: T | GalleryGridBlockSelect<T>;
+        faqList?: T | FaqListBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
-        archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
   meta?:
@@ -1094,6 +1244,132 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroVideoBlock_select".
+ */
+export interface HeroVideoBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  subtitle?: T;
+  videoUrl?: T;
+  poster?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TrustMarqueeBlock_select".
+ */
+export interface TrustMarqueeBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductShowcaseBlock_select".
+ */
+export interface ProductShowcaseBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyGridBlock_select".
+ */
+export interface WhyGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  items?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  ctaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinancingBandBlock_select".
+ */
+export interface FinancingBandBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  body?: T;
+  ctaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RegionGridBlock_select".
+ */
+export interface RegionGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  ctaLabel?: T;
+  regions?:
+    | T
+    | {
+        name?: T;
+        cities?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryGridBlock_select".
+ */
+export interface GalleryGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqListBlock_select".
+ */
+export interface FaqListBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1156,20 +1432,6 @@ export interface MediaBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock_select".
- */
-export interface ArchiveBlockSelect<T extends boolean = true> {
-  introContent?: T;
-  populateBy?: T;
-  relationTo?: T;
-  categories?: T;
-  limit?: T;
-  selectedDocs?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
@@ -1181,14 +1443,50 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
+ * via the `definition` "products_select".
  */
-export interface PostsSelect<T extends boolean = true> {
-  title?: T;
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  category?: T;
+  short?: T;
+  blurb?: T;
   heroImage?: T;
-  content?: T;
-  relatedPosts?: T;
-  categories?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  basePrice?: T;
+  pricePerSqFt?: T;
+  showPrice?: T;
+  sortOrder?: T;
+  sizes?:
+    | T
+    | {
+        label?: T;
+        sqft?: T;
+        id?: T;
+      };
+  quickSpecs?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  fullSpecs?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  options?: T;
+  colors?: T;
+  published?: T;
   meta?:
     | T
     | {
@@ -1196,19 +1494,57 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
-  publishedAt?: T;
-  authors?: T;
-  populatedAuthors?:
-    | T
-    | {
-        id?: T;
-        name?: T;
-      };
-  generateSlug?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-options_select".
+ */
+export interface ProductOptionsSelect<T extends boolean = true> {
+  label?: T;
+  generateSlug?: T;
+  slug?: T;
+  price?: T;
+  products?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colors_select".
+ */
+export interface ColorsSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  group?: T;
+  hex?: T;
+  swatch?: T;
+  products?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
+export interface LocationsSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  type?: T;
+  region?: T;
+  address?: T;
+  city?: T;
+  phone?: T;
+  email?: T;
+  description?: T;
+  mapImage?: T;
+  esSpoken?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1303,26 +1639,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
-  generateSlug?: T;
-  slug?: T;
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1514,33 +1830,6 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "search_select".
- */
-export interface SearchSelect<T extends boolean = true> {
-  title?: T;
-  priority?: T;
-  doc?: T;
-  slug?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  categories?:
-    | T
-    | {
-        relationTo?: T;
-        categoryID?: T;
-        title?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1628,20 +1917,17 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  phone?: string | null;
+  quoteLabel?: string | null;
   navItems?:
     | {
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
           url?: string | null;
           label: string;
         };
@@ -1657,26 +1943,47 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  companyLinks?:
     | {
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
           url?: string | null;
           label: string;
         };
         id?: string | null;
       }[]
     | null;
+  /**
+   * Products listed in the footer (order preserved).
+   */
+  productLinks?: (number | Product)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  phone: string;
+  email?: string | null;
+  hqTitle?: string | null;
+  hqAddress?: string | null;
+  zipSuccessMessage?: string | null;
+  quoteHeadline?: string | null;
+  quoteFormNote?: string | null;
+  quoteSentTitle?: string | null;
+  quoteSentBody?: string | null;
+  estimateDisclaimer?: string | null;
+  showPrices?: boolean | null;
+  footerBlurb?: string | null;
+  approvalsLine?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1685,6 +1992,8 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  phone?: T;
+  quoteLabel?: T;
   navItems?:
     | T
     | {
@@ -1708,7 +2017,7 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  companyLinks?:
     | T
     | {
         link?:
@@ -1722,6 +2031,29 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  productLinks?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  phone?: T;
+  email?: T;
+  hqTitle?: T;
+  hqAddress?: T;
+  zipSuccessMessage?: T;
+  quoteHeadline?: T;
+  quoteFormNote?: T;
+  quoteSentTitle?: T;
+  quoteSentBody?: T;
+  estimateDisclaimer?: T;
+  showPrices?: T;
+  footerBlurb?: T;
+  approvalsLine?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1744,55 +2076,14 @@ export interface TaskSchedulePublish {
   input: {
     type?: ('publish' | 'unpublish') | null;
     locale?: string | null;
-    doc?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
+    doc?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
     global?: string | null;
     user?: (number | null) | User;
   };
   output?: unknown;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BannerBlock".
- */
-export interface BannerBlock {
-  style: 'info' | 'warning' | 'error' | 'success';
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'banner';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CodeBlock".
- */
-export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
-  code: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'code';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

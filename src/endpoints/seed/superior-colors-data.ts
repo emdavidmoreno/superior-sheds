@@ -1,0 +1,17 @@
+export const colorSeedData = [
+  { slug: 'aluminum-white', name: { en: 'White', es: 'Blanco' }, group: 'aluminum' as const, hex: '#F5F3EF' },
+  { slug: 'aluminum-ivory', name: { en: 'Ivory', es: 'Marfil' }, group: 'aluminum' as const, hex: '#E8DDC8' },
+  { slug: 'aluminum-clay', name: { en: 'Clay', es: 'Arcilla' }, group: 'aluminum' as const, hex: '#C4A574' },
+  { slug: 'aluminum-beige', name: { en: 'Beige', es: 'Beige' }, group: 'aluminum' as const, hex: '#D4C4A8' },
+  { slug: 'aluminum-light-gray', name: { en: 'Light gray', es: 'Gris claro' }, group: 'aluminum' as const, hex: '#C5C7C9' },
+  { slug: 'aluminum-charcoal', name: { en: 'Charcoal', es: 'Carbón' }, group: 'aluminum' as const, hex: '#4A4E55' },
+  { slug: 'aluminum-forest', name: { en: 'Forest green', es: 'Verde bosque' }, group: 'aluminum' as const, hex: '#2F4F3E' },
+  { slug: 'aluminum-light-blue', name: { en: 'Light blue', es: 'Azul claro' }, group: 'aluminum' as const, hex: '#7BA3C9' },
+  { slug: 'aluminum-barn-red', name: { en: 'Barn red', es: 'Rojo granero' }, group: 'aluminum' as const, hex: '#8B3A3A' },
+  { slug: 'aluminum-brown', name: { en: 'Brown', es: 'Marrón' }, group: 'aluminum' as const, hex: '#6B4A32' },
+  { slug: 'aluminum-tan', name: { en: 'Tan', es: 'Canela' }, group: 'aluminum' as const, hex: '#C2A882' },
+  { slug: 'aluminum-black', name: { en: 'Black', es: 'Negro' }, group: 'aluminum' as const, hex: '#1A1C1F' },
+  { slug: 'shingle-weathered-wood', name: { en: 'Weathered wood', es: 'Madera envejecida' }, group: 'shingles' as const, hex: '#6E5B4B' },
+  { slug: 'shingle-charcoal', name: { en: 'Charcoal shingle', es: 'Shingle carbón' }, group: 'shingles' as const, hex: '#3A3D42' },
+  { slug: 'perma-terracotta', name: { en: 'Terracotta', es: 'Terracota' }, group: 'permaTile' as const, hex: '#B45A3C' },
+]

@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="./image-slot.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #0A0C11; color: #F5F3EF; font-family: Archivo, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: #3D97E8; text-decoration: none; }
+  a:hover { color: #7FBBF2; }
+  ::selection { background: #3D97E8; color: #0A0C11; }
+  input, select, textarea, button { font-family: Archivo, system-ui, sans-serif; }
+  @keyframes kb { from { transform: scale(1.06) translateY(0); } to { transform: scale(1.18) translateY(-2%); } }
+  @keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  @keyframes slidein { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+  [data-reveal] { opacity: 0; transform: translateY(30px); }
+  [data-reveal="in"] { opacity: 1; transform: none; transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+  @media (max-width: 1000px) {
+    [data-desk] { display: none !important; }
+    [data-mob] { display: flex !important; }
+    [data-col] { grid-template-columns: 1fr !important; }
+    [data-pad] { padding-left: 20px !important; padding-right: 20px !important; }
+    [data-spec] { left: 20px !important; right: 20px !important; bottom: 20px !important; width: auto !important; }
+    [data-psec] { min-height: 108vh !important; }
+    [data-psecpad] { padding-bottom: 300px !important; }
+    [data-drawer] { width: 100vw !important; }
+    body { padding-bottom: 82px; }
+    [data-heropad] { padding-bottom: 176px !important; }
+    [data-hero] { height: auto !important; min-height: 92vh !important; }
+    [data-disp] { font-size: clamp(38px, 12vw, 74px) !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#0A0C11;position:relative">
+
+  <header style="position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(10,12,17,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(245,243,239,.1)">
+    <div data-pad style="max-width:1560px;margin:0 auto;padding:0 40px;height:74px;display:flex;align-items:center;gap:32px">
+      <div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0">
+        <img src="./assets/logo.png" alt="Superior Sheds" style="height:44px;width:auto;display:block" />
+      </div>
+
+      <nav data-desk style="display:flex;align-items:center;gap:26px;margin-left:12px">
+        <div onMouseEnter="{{ openMenu }}" onMouseLeave="{{ closeMenu }}" style="position:relative;padding:26px 0">
+          <div style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">{{ t.navProducts }}<span style="font-size:9px;opacity:.6">▼</span></div>
+          <sc-if value="{{ menuOpen }}">
+            <div style="position:absolute;top:100%;left:-24px;width:660px;background:#101319;border:1px solid rgba(245,243,239,.12);padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:rise .3s cubic-bezier(.16,1,.3,1)">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+                <div onClick="{{ p.go }}" style="display:flex;gap:12px;padding:12px;cursor:pointer;border:1px solid transparent" style-hover="border-color:rgba(61,151,232,.5);background:rgba(61,151,232,.07)">
+                  <div style="width:62px;height:48px;background:#181C23;flex-shrink:0;overflow:hidden">
+                    <image-slot id="{{ p.menuSlot }}" src="{{ p.photo }}" shape="rect" fit="cover" placeholder=" "></image-slot>
+                  </div>
+                  <div>
+                    <div style="font-size:14px;font-weight:700;letter-spacing:.02em">{{ p.name }}</div>
+                    <div style="font-size:12px;color:#93979F;margin-top:3px">{{ p.short }}</div>
+                    <div style="font-size:11px;color:#F5A524;font-weight:700;margin-top:4px;letter-spacing:.06em">{{ p.priceLabel }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <div onClick="{{ goLocations }}" style="font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;opacity:.85" style-hover="opacity:1;color:#3D97E8">{{ t.navLocations }}</div>
+        <div onClick="{{ goHome }}" style="font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;opacity:.85" style-hover="opacity:1;color:#3D97E8">{{ t.navGallery }}</div>
+        <div onClick="{{ goHome }}" style="font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;opacity:.85" style-hover="opacity:1;color:#3D97E8">{{ t.navFinancing }}</div>
+      </nav>
+
+      <div style="flex:1"></div>
+
+      <div onClick="{{ toggleLang }}" style="display:flex;border:1px solid rgba(245,243,239,.22);cursor:pointer;flex-shrink:0">
+        <div style="padding:6px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;background:{{ enBg }};color:{{ enFg }}">EN</div>
+        <div style="padding:6px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;background:{{ esBg }};color:{{ esFg }}">ES</div>
+      </div>
+
+      <a data-desk href="tel:8774397433" style="color:#F5F3EF;font-size:14px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:8px" style-hover="color:#3D97E8">
+        <span style="width:6px;height:6px;border-radius:50%;background:#7CE38B;animation:pulse 2s infinite"></span>877-439-7433
+      </a>
+
+      <div onClick="{{ openQuote }}" style="background:#F5A524;color:#0A0C11;padding:13px 22px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex-shrink:0" style-hover="background:#F5F3EF">{{ t.getQuote }}</div>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <section style="position:relative;height:100vh;min-height:640px;overflow:hidden">
+        <div style="position:absolute;inset:0;background-color:#0A0C11">
+          <img src="https://www.superiorsheds.com/wp-content/gallery/bungalow-shed-gallery/20130423_164055.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+          <video ref="{{ heroVideo }}" autoplay="autoplay" muted="muted" loop="loop" playsinline="playsinline" preload="auto" poster="https://www.superiorsheds.com/wp-content/gallery/bungalow-shed-gallery/20130423_164055.jpg" src="https://videos.pexels.com/video-files/35834495/15194926_2730_1440_30fps.mp4" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+        </div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,17,.82) 0%,rgba(10,12,17,.35) 40%,rgba(10,12,17,.94) 100%);pointer-events:none"></div>
+        <div data-pad data-heropad style="position:absolute;inset:0;max-width:1560px;margin:0 auto;padding:0 40px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:92px;pointer-events:none">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;animation:rise .8s cubic-bezier(.16,1,.3,1) both">
+            <div style="height:1px;width:52px;background:#3D97E8"></div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#3D97E8">{{ t.heroKicker }}</div>
+          </div>
+          <h1 data-disp style="font-family:Anton;font-weight:400;font-size:clamp(52px,7.4vw,124px);line-height:.9;letter-spacing:-.01em;margin:0;max-width:16ch;text-wrap:balance;animation:rise 1s cubic-bezier(.16,1,.3,1) .08s both">{{ t.heroTitle }}</h1>
+          <p style="font-size:clamp(16px,1.35vw,21px);color:#C9CBD0;max-width:56ch;margin:24px 0 0;line-height:1.5;text-wrap:pretty;animation:rise 1s cubic-bezier(.16,1,.3,1) .16s both">{{ t.heroSub }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:38px;pointer-events:auto;animation:rise 1s cubic-bezier(.16,1,.3,1) .24s both">
+            <div onClick="{{ openQuote }}" style="background:#F5A524;color:#0A0C11;padding:19px 34px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.heroCta }}</div>
+            <a href="tel:8774397433" style="border:1px solid rgba(245,243,239,.35);color:#F5F3EF;padding:19px 34px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase" style-hover="border-color:#F5F3EF;background:rgba(155,167,180,.18);color:#F5F3EF">{{ t.heroCta2 }}</a>
+          </div>
+        </div>
+      </section>
+
+      <div style="border-top:1px solid rgba(245,243,239,.1);border-bottom:1px solid rgba(245,243,239,.1);background:#0D0F12;overflow:hidden;padding:18px 0">
+        <div style="display:flex;width:max-content;animation:marq 34s linear infinite">
+          <sc-for list="{{ trustLoop }}" as="item" hint-placeholder-count="12">
+            <div style="display:flex;align-items:center;gap:14px;padding:0 30px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#B9BCC2;white-space:nowrap">
+              <span style="color:#F5A524;font-size:16px">◆</span>{{ item.label }}
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <section data-pad data-reveal style="max-width:1560px;margin:0 auto;padding:110px 40px 40px">
+        <div data-col style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:end">
+          <h2 style="font-family:Anton;font-weight:400;font-size:clamp(34px,4.2vw,68px);line-height:.96;margin:0;text-wrap:balance">{{ t.pickTitle }}</h2>
+          <p style="font-size:17px;color:#A9ADB4;line-height:1.6;margin:0;text-wrap:pretty">{{ t.pickSub }}</p>
+        </div>
+      </section>
+
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+        <section data-reveal data-psec style="position:relative;height:88vh;min-height:560px;overflow:hidden;margin-bottom:8px">
+          <div style="position:absolute;inset:0">
+            <image-slot id="{{ p.homeSlot }}" src="{{ p.photo }}" shape="rect" fit="cover" placeholder="{{ p.slotHint }}"></image-slot>
+          </div>
+          <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,12,17,.92) 0%,rgba(10,12,17,.6) 45%,rgba(10,12,17,.15) 100%);pointer-events:none"></div>
+          <div data-pad data-psecpad style="position:absolute;inset:0;max-width:1560px;margin:0 auto;padding:0 40px;display:flex;align-items:center;pointer-events:none">
+            <div style="max-width:620px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8;margin-bottom:16px">{{ p.category }}</div>
+              <h3 data-disp style="font-family:Anton;font-weight:400;font-size:clamp(40px,5.6vw,92px);line-height:.92;margin:0">{{ p.name }}</h3>
+              <p style="font-size:17px;color:#C4C7CC;line-height:1.6;margin:20px 0 0;max-width:46ch;text-wrap:pretty">{{ p.blurb }}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;pointer-events:auto">
+                <div onClick="{{ p.go }}" style="background:#F5F3EF;color:#0A0C11;padding:17px 30px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#0B6FD0;color:#FFFFFF">{{ t.explore }}</div>
+                <div onClick="{{ p.quote }}" style="border:1px solid rgba(245,243,239,.35);padding:17px 30px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="border-color:#3D97E8;color:#3D97E8">{{ t.quoteThis }}</div>
+              </div>
+            </div>
+          </div>
+          <div data-spec style="position:absolute;right:40px;bottom:56px;width:330px;background:rgba(16,18,21,.86);backdrop-filter:blur(16px);border:1px solid rgba(245,243,239,.16);padding:24px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(155,167,180,.3);padding-bottom:14px;margin-bottom:14px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9BA7B4">{{ t.specsLabel }}</div>
+              <div style="font-family:Anton;font-size:24px;color:#F5A524;line-height:1">{{ p.priceFrom }}</div>
+            </div>
+            <sc-for list="{{ p.quickSpecs }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:13px">
+                <span style="color:#9BA7B4">{{ s.k }}</span>
+                <span style="font-weight:700;text-align:right">{{ s.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+
+      <section data-pad data-reveal style="max-width:1560px;margin:0 auto;padding:120px 40px">
+        <div data-col style="display:grid;grid-template-columns:1fr 1fr;gap:80px">
+          <div>
+            <h2 style="font-family:Anton;font-weight:400;font-size:clamp(34px,4.2vw,64px);line-height:.96;margin:0;text-wrap:balance">{{ t.whyTitle }}</h2>
+            <p style="font-size:17px;color:#A9ADB4;line-height:1.6;margin:22px 0 0;max-width:46ch;text-wrap:pretty">{{ t.whySub }}</p>
+            <div onClick="{{ openQuote }}" style="display:inline-block;margin-top:34px;background:#F5A524;color:#0A0C11;padding:18px 32px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.startQuote }}</div>
+          </div>
+          <div style="display:grid;gap:2px">
+            <sc-for list="{{ whyItems }}" as="w" hint-placeholder-count="4">
+              <div style="background:#101319;border:1px solid rgba(245,243,239,.1);padding:28px;display:flex;gap:22px" style-hover="border-color:rgba(61,151,232,.45)">
+                <div style="font-family:Anton;font-size:26px;color:#9BA7B4;line-height:1;min-width:46px">{{ w.n }}</div>
+                <div>
+                  <div style="font-size:17px;font-weight:700;letter-spacing:.01em">{{ w.title }}</div>
+                  <div style="font-size:15px;color:#9CA0A7;line-height:1.55;margin-top:7px;text-wrap:pretty">{{ w.body }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <section data-reveal style="background:#101319;border-top:1px solid rgba(245,243,239,.1);border-bottom:1px solid rgba(245,243,239,.1)">
+        <div data-pad style="max-width:1560px;margin:0 auto;padding:90px 40px">
+          <div data-col style="display:grid;grid-template-columns:auto 1fr auto;gap:44px;align-items:center">
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8">{{ t.finKicker }}</div>
+              <div style="font-family:Anton;font-size:clamp(30px,3.4vw,52px);line-height:1;margin-top:12px">{{ t.finTitle }}</div>
+            </div>
+            <div style="font-size:16px;color:#A9ADB4;line-height:1.6;max-width:48ch;text-wrap:pretty">{{ t.finBody }}</div>
+            <div onClick="{{ openQuote }}" style="border:1px solid #F5A524;color:#F5A524;padding:18px 30px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap" style-hover="background:#F5A524;color:#0A0C11">{{ t.finCta }}</div>
+          </div>
+        </div>
+      </section>
+
+      <section data-pad data-reveal style="max-width:1560px;margin:0 auto;padding:110px 40px">
+        <div style="display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;margin-bottom:42px">
+          <h2 style="font-family:Anton;font-weight:400;font-size:clamp(32px,3.8vw,58px);line-height:.98;margin:0">{{ t.areaTitle }}</h2>
+          <div onClick="{{ goLocations }}" style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3D97E8;cursor:pointer;border-bottom:1px solid #3D97E8;padding-bottom:4px">{{ t.areaCta }}</div>
+        </div>
+        <div data-col style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+          <sc-for list="{{ regions }}" as="r" hint-placeholder-count="4">
+            <div style="background:#101319;border:1px solid rgba(245,243,239,.1);padding:26px" style-hover="border-color:rgba(61,151,232,.45);background:#141821">
+              <div style="font-size:16px;font-weight:700">{{ r.name }}</div>
+              <div style="font-size:14px;color:#9BA7B4;line-height:1.5;margin-top:8px">{{ r.cities }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isProduct }}">
+    <div>
+      <section style="position:relative;height:100vh;min-height:620px;overflow:hidden">
+        <div style="position:absolute;inset:0;animation:kb 24s ease-in-out infinite alternate">
+          <image-slot id="{{ product.pageSlot }}" src="{{ product.photo }}" shape="rect" fit="cover" placeholder="{{ product.slotHint }}"></image-slot>
+        </div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,17,.8) 0%,rgba(10,12,17,.3) 45%,rgba(10,12,17,.95) 100%);pointer-events:none"></div>
+        <div data-pad data-heropad style="position:absolute;inset:0;max-width:1560px;margin:0 auto;padding:0 40px 86px;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none">
+          <div onClick="{{ goHome }}" style="font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9CA0A7;cursor:pointer;pointer-events:auto;margin-bottom:20px" style-hover="color:#3D97E8">← {{ t.backHome }}</div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8;margin-bottom:14px">{{ product.category }}</div>
+          <h1 data-disp style="font-family:Anton;font-weight:400;font-size:clamp(50px,7.2vw,118px);line-height:.9;margin:0">{{ product.name }}</h1>
+          <p style="font-size:clamp(16px,1.3vw,20px);color:#C4C7CC;max-width:58ch;line-height:1.55;margin:22px 0 0;text-wrap:pretty">{{ product.blurb }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;pointer-events:auto">
+            <div onClick="{{ quoteCurrent }}" style="background:#F5A524;color:#0A0C11;padding:19px 32px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.quoteThis }}</div>
+            <a href="tel:8774397433" style="border:1px solid rgba(245,243,239,.35);color:#F5F3EF;padding:19px 32px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase" style-hover="border-color:#F5F3EF;background:rgba(155,167,180,.18);color:#F5F3EF">{{ t.callNow }}</a>
+          </div>
+        </div>
+      </section>
+
+      <section data-pad style="max-width:1560px;margin:0 auto;padding:90px 40px 40px">
+        <div data-col style="display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:start">
+          <div data-reveal>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8">{{ t.configure }}</div>
+            <h2 style="font-family:Anton;font-weight:400;font-size:clamp(30px,3.4vw,50px);line-height:1;margin:12px 0 8px">{{ t.pickSize }}</h2>
+            <p style="font-size:15px;color:#9BA7B4;margin:0 0 26px">{{ t.pickSizeNote }}</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:2px">
+              <sc-for list="{{ sizeOptions }}" as="s" hint-placeholder-count="12">
+                <div onClick="{{ s.pick }}" style="padding:16px 8px;text-align:center;cursor:pointer;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.fg }};font-size:15px;font-weight:700;letter-spacing:.02em" style-hover="border-color:#3D97E8">{{ s.label }}</div>
+              </sc-for>
+            </div>
+
+            <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8;margin:48px 0 16px">{{ t.addOns }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:2px">
+              <sc-for list="{{ optionChips }}" as="o" hint-placeholder-count="6">
+                <div onClick="{{ o.toggle }}" style="padding:13px 20px;cursor:pointer;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.fg }};font-size:14px;font-weight:600" style-hover="border-color:#3D97E8">{{ o.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div data-reveal style="position:sticky;top:106px;background:#101319;border:1px solid rgba(155,167,180,.3);padding:30px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4">{{ t.yourBuild }}</div>
+            <div style="font-family:Anton;font-size:30px;line-height:1.05;margin:10px 0 4px">{{ buildTitle }}</div>
+            <div style="font-size:14px;color:#9BA7B4">{{ buildFootprint }}</div>
+            <div style="border-top:1px solid rgba(155,167,180,.3);margin:22px 0;padding-top:22px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4">{{ t.estimate }}</div>
+              <div style="font-family:Anton;font-size:52px;color:#F5A524;line-height:1.05;margin-top:6px">{{ estimate }}</div>
+              <div style="font-size:12px;color:#7D8188;line-height:1.5;margin-top:8px">{{ t.estimateNote }}</div>
+            </div>
+            <sc-for list="{{ selectedOptionList }}" as="o" hint-placeholder-count="2">
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:#C4C7CC">
+                <span>{{ o.label }}</span><span style="font-weight:700">{{ o.priceLabel }}</span>
+              </div>
+            </sc-for>
+            <div onClick="{{ quoteCurrent }}" style="margin-top:24px;background:#F5A524;color:#0A0C11;padding:18px;text-align:center;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.lockQuote }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px">
+              <a href="tel:8774397433" style="border:1px solid rgba(245,243,239,.25);color:#F5F3EF;padding:14px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase" style-hover="border-color:#F5F3EF;color:#F5F3EF">{{ t.call }}</a>
+              <a href="mailto:info@superiorsheds.com" style="border:1px solid rgba(245,243,239,.25);color:#F5F3EF;padding:14px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase" style-hover="border-color:#F5F3EF;color:#F5F3EF">{{ t.email }}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-pad data-reveal style="max-width:1560px;margin:0 auto;padding:70px 40px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px">
+          <sc-for list="{{ product.gallery }}" as="g" hint-placeholder-count="5">
+            <div style="aspect-ratio:4/3;background:#101319;border:1px solid rgba(245,243,239,.1)">
+              <image-slot id="{{ g.slot }}" src="{{ g.src }}" shape="rect" fit="cover" placeholder="{{ g.hint }}"></image-slot>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section data-pad data-reveal style="max-width:1560px;margin:0 auto;padding:40px 40px 110px">
+        <h2 style="font-family:Anton;font-weight:400;font-size:clamp(30px,3.6vw,54px);line-height:1;margin:0 0 34px">{{ t.fullSpecs }}</h2>
+        <div data-col style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+          <sc-for list="{{ product.specs }}" as="s" hint-placeholder-count="8">
+            <div style="background:#101319;border:1px solid rgba(245,243,239,.1);padding:24px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#3D97E8">{{ s.k }}</div>
+              <div style="font-size:15px;color:#D3D5D9;line-height:1.55;margin-top:9px;text-wrap:pretty">{{ s.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section data-reveal style="position:relative;padding:110px 0;background:#101319;border-top:1px solid rgba(245,243,239,.1)">
+        <div data-pad style="max-width:1560px;margin:0 auto;padding:0 40px;text-align:center">
+          <h2 style="font-family:Anton;font-weight:400;font-size:clamp(34px,4.6vw,76px);line-height:.96;margin:0 auto;max-width:20ch;text-wrap:balance">{{ t.ctaTitle }}</h2>
+          <p style="font-size:17px;color:#A9ADB4;margin:20px auto 0;max-width:52ch;line-height:1.6">{{ t.ctaSub }}</p>
+          <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px">
+            <div onClick="{{ quoteCurrent }}" style="background:#F5A524;color:#0A0C11;padding:19px 34px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.getQuote }}</div>
+            <div onClick="{{ goOther }}" style="border:1px solid rgba(245,243,239,.35);padding:19px 34px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="border-color:#3D97E8;color:#3D97E8">{{ t.seeOther }}</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLocations }}">
+    <div data-pad style="max-width:1560px;margin:0 auto;padding:150px 40px 110px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#3D97E8">{{ t.navLocations }}</div>
+      <h1 style="font-family:Anton;font-weight:400;font-size:clamp(40px,5.6vw,92px);line-height:.94;margin:14px 0 0;max-width:18ch;text-wrap:balance">{{ t.locTitle }}</h1>
+      <p style="font-size:17px;color:#A9ADB4;max-width:56ch;line-height:1.6;margin:20px 0 0">{{ t.locSub }}</p>
+      <div style="display:flex;gap:2px;margin-top:34px;flex-wrap:wrap">
+        <input value="{{ zip }}" onChange="{{ onZip }}" placeholder="{{ t.zipPlaceholder }}" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:18px 20px;font-size:16px;width:240px;outline:none" />
+        <div onClick="{{ checkZip }}" style="background:#0B6FD0;color:#FFFFFF;padding:18px 28px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.checkZip }}</div>
+      </div>
+      <sc-if value="{{ zipChecked }}">
+        <div style="margin-top:20px;border:1px solid rgba(124,227,139,.45);background:rgba(124,227,139,.08);padding:18px 22px;font-size:15px;color:#CFEFD5;max-width:640px">{{ zipMessage }}</div>
+      </sc-if>
+
+      <div data-col style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:56px">
+        <div style="background:#101319;border:1px solid rgba(61,151,232,.45);padding:34px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#3D97E8">{{ t.hq }}</div>
+          <div style="font-family:Anton;font-size:34px;line-height:1.05;margin:10px 0 12px">Orange City</div>
+          <div style="font-size:16px;color:#C4C7CC;line-height:1.6">2323 S. Volusia Avenue<br />Orange City, Florida 32763</div>
+          <div style="display:flex;gap:18px;margin-top:20px;flex-wrap:wrap">
+            <a href="tel:8774397433" style="font-size:15px;font-weight:700">877-439-7433</a>
+            <a href="mailto:info@superiorsheds.com" style="font-size:15px;font-weight:700">info@superiorsheds.com</a>
+          </div>
+        </div>
+        <div style="min-height:300px;background:#101319;border:1px solid rgba(245,243,239,.1)">
+          <image-slot id="loc-map" src="{{ demoImg }}" shape="rect" fit="cover" placeholder="Drop a map or yard photo"></image-slot>
+        </div>
+      </div>
+
+      <div data-col style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:2px">
+        <sc-for list="{{ regions }}" as="r" hint-placeholder-count="4">
+          <div style="background:#101319;border:1px solid rgba(245,243,239,.1);padding:26px" style-hover="border-color:rgba(61,151,232,.45)">
+            <div style="font-size:16px;font-weight:700">{{ r.name }}</div>
+            <div style="font-size:14px;color:#9BA7B4;line-height:1.5;margin-top:8px">{{ r.cities }}</div>
+            <div onClick="{{ openQuote }}" style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3D97E8;margin-top:16px;cursor:pointer">{{ t.getQuote }} →</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <footer style="background:#0D0F12;border-top:1px solid rgba(245,243,239,.1)">
+    <div data-pad style="max-width:1560px;margin:0 auto;padding:70px 40px 40px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px" data-col>
+      <div>
+        <img src="./assets/logo.png" alt="Superior Sheds" style="height:52px;width:auto;display:block" />
+        <div style="font-size:15px;color:#9BA7B4;line-height:1.6;margin-top:14px;max-width:34ch">{{ t.footBlurb }}</div>
+        <div onClick="{{ openQuote }}" style="display:inline-block;margin-top:22px;background:#F5A524;color:#0A0C11;padding:15px 26px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.getQuote }}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:14px">{{ t.navProducts }}</div>
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+          <div onClick="{{ p.go }}" style="font-size:15px;color:#D3D5D9;padding:5px 0;cursor:pointer" style-hover="color:#3D97E8">{{ p.name }}</div>
+        </sc-for>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:14px">{{ t.company }}</div>
+        <sc-for list="{{ footerLinks }}" as="l" hint-placeholder-count="6">
+          <div style="font-size:15px;color:#D3D5D9;padding:5px 0;cursor:pointer" style-hover="color:#3D97E8">{{ l.label }}</div>
+        </sc-for>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:14px">{{ t.contact }}</div>
+        <div style="font-size:15px;color:#D3D5D9;line-height:1.7">2323 S. Volusia Ave<br />Orange City, FL 32763</div>
+        <a href="tel:8774397433" style="display:block;font-size:15px;font-weight:700;margin-top:12px">877-439-7433</a>
+        <a href="mailto:info@superiorsheds.com" style="display:block;font-size:15px;margin-top:4px">info@superiorsheds.com</a>
+      </div>
+    </div>
+    <div data-pad style="max-width:1560px;margin:0 auto;padding:20px 40px 110px;border-top:1px solid rgba(155,167,180,.18);font-size:13px;color:#70747B;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>© 2026 Superior Sheds, Inc.</div>
+      <div>{{ t.approvals }}</div>
+    </div>
+  </footer>
+
+  <div data-desk style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;gap:2px;align-items:flex-end">
+    <div onClick="{{ openQuote }}" style="background:#F5A524;color:#0A0C11;padding:18px 26px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 18px 50px rgba(0,0,0,.55);display:flex;align-items:center;gap:12px" style-hover="background:#F5F3EF">
+      <span style="font-family:Anton;font-size:17px">{{ t.quoteIn60 }}</span>
+    </div>
+    <a href="tel:8774397433" style="background:rgba(16,18,21,.9);backdrop-filter:blur(10px);border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:13px 22px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase" style-hover="border-color:#3D97E8;color:#3D97E8">{{ t.orCall }} 877-439-7433</a>
+  </div>
+
+  <div data-mob style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(10,12,17,.94);backdrop-filter:blur(14px);border-top:1px solid rgba(155,167,180,.3);padding:12px;gap:10px">
+    <a href="tel:8774397433" style="flex:1;border:1px solid rgba(245,243,239,.25);color:#F5F3EF;padding:16px;text-align:center;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">{{ t.call }}</a>
+    <div onClick="{{ openQuote }}" style="flex:1.4;background:#F5A524;color:#0A0C11;padding:16px;text-align:center;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">{{ t.getQuote }}</div>
+  </div>
+
+  <sc-if value="{{ quoteOpen }}">
+    <div style="position:fixed;inset:0;z-index:90;display:flex;justify-content:flex-end">
+      <div onClick="{{ closeQuote }}" style="position:absolute;inset:0;background:rgba(5,6,7,.72);backdrop-filter:blur(3px)"></div>
+      <div data-drawer style="position:relative;width:520px;max-width:100vw;height:100%;background:#0D0F12;border-left:1px solid rgba(245,243,239,.16);overflow-y:auto;animation:slidein .45s cubic-bezier(.16,1,.3,1) both">
+        <div style="position:sticky;top:0;background:#0D0F12;border-bottom:1px solid rgba(245,243,239,.12);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;z-index:2">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#3D97E8">{{ t.freeQuote }}</div>
+            <div style="font-family:Anton;font-size:24px;line-height:1.1;margin-top:4px">{{ t.quoteHead }}</div>
+          </div>
+          <div onClick="{{ closeQuote }}" style="width:40px;height:40px;border:1px solid rgba(245,243,239,.25);display:grid;place-items:center;cursor:pointer;font-size:18px" style-hover="border-color:#3D97E8;color:#3D97E8">✕</div>
+        </div>
+
+        <sc-if value="{{ quoteSent }}">
+          <div style="padding:60px 28px;text-align:center">
+            <div style="width:64px;height:64px;margin:0 auto;background:#7CE38B;color:#0A0C11;display:grid;place-items:center;font-size:30px;font-weight:700">✓</div>
+            <div style="font-family:Anton;font-size:32px;line-height:1.1;margin-top:24px">{{ t.sentTitle }}</div>
+            <div style="font-size:16px;color:#A9ADB4;line-height:1.6;margin-top:12px">{{ t.sentBody }}</div>
+            <a href="tel:8774397433" style="display:inline-block;margin-top:28px;border:1px solid #3D97E8;color:#3D97E8;padding:16px 28px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">{{ t.orCall }} 877-439-7433</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ quoteForm }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:26px 28px 60px;display:grid;gap:22px">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:10px">1 · {{ t.fProduct }}</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+                <sc-for list="{{ quoteProducts }}" as="p" hint-placeholder-count="6">
+                  <div onClick="{{ p.pick }}" style="padding:14px 12px;cursor:pointer;font-size:14px;font-weight:600;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.fg }}" style-hover="border-color:#3D97E8">{{ p.name }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:10px">2 · {{ t.fSize }}</div>
+              <select value="{{ qSize }}" onChange="{{ onQSize }}" style="width:100%;background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none">
+                <sc-for list="{{ quoteSizes }}" as="s" hint-placeholder-count="6">
+                  <option value="{{ s.label }}">{{ s.label }}</option>
+                </sc-for>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:10px">3 · {{ t.fOptions }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:2px">
+                <sc-for list="{{ optionChips }}" as="o" hint-placeholder-count="6">
+                  <div onClick="{{ o.toggle }}" style="padding:11px 16px;cursor:pointer;font-size:13px;font-weight:600;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.fg }}" style-hover="border-color:#3D97E8">{{ o.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:10px">4 · {{ t.fWhen }}</div>
+              <div style="display:flex;gap:2px;flex-wrap:wrap">
+                <sc-for list="{{ timelineChips }}" as="c" hint-placeholder-count="3">
+                  <div onClick="{{ c.pick }}" style="padding:12px 18px;cursor:pointer;font-size:13px;font-weight:600;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }}" style-hover="border-color:#3D97E8">{{ c.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="border-top:1px solid rgba(245,243,239,.12);padding-top:22px;display:grid;gap:2px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4;margin-bottom:8px">5 · {{ t.fContact }}</div>
+              <input value="{{ qName }}" onChange="{{ onQName }}" placeholder="{{ t.fName }}" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none" style-focus="border-color:#3D97E8" />
+              <input value="{{ qPhone }}" onChange="{{ onQPhone }}" placeholder="{{ t.fPhone }}" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none" style-focus="border-color:#3D97E8" />
+              <input value="{{ qEmail }}" onChange="{{ onQEmail }}" placeholder="{{ t.fEmail }}" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none" style-focus="border-color:#3D97E8" />
+              <input value="{{ qZip }}" onChange="{{ onQZip }}" placeholder="{{ t.fZip }}" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none" style-focus="border-color:#3D97E8" />
+              <textarea value="{{ qNotes }}" onChange="{{ onQNotes }}" placeholder="{{ t.fNotes }}" rows="3" style="background:#101319;border:1px solid rgba(245,243,239,.2);color:#F5F3EF;padding:15px;font-size:15px;outline:none;resize:vertical" style-focus="border-color:#3D97E8"></textarea>
+            </div>
+            <div style="background:#101319;border:1px solid rgba(155,167,180,.3);padding:20px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9BA7B4">{{ t.estimate }}</div>
+                <div style="font-family:Anton;font-size:32px;color:#F5A524;line-height:1">{{ estimate }}</div>
+              </div>
+              <div style="font-size:12px;color:#7D8188;margin-top:8px;line-height:1.5">{{ t.estimateNote }}</div>
+            </div>
+            <div onClick="{{ submitQuote }}" style="background:#F5A524;color:#0A0C11;padding:20px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#F5F3EF">{{ t.sendQuote }}</div>
+            <div style="font-size:12px;color:#7D8188;text-align:center;line-height:1.5">{{ t.formNote }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;startLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;English&quot;,&quot;Español&quot;],&quot;default&quot;:&quot;English&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Site&quot;},&quot;showPrices&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Revenue&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Site&quot;}}">
+const DEMO_IMG = './uploads/joanna-kosinska-qcqmS0JG58Q-unsplash-3d9169ed.jpg';
+
+const G = 'https://www.superiorsheds.com/wp-content/gallery/';
+const PHOTOS = {
+  'bungalow': [
+    G + 'bungalow-shed-gallery/400471_335287329815764_2092667552_n.jpg',
+    G + 'bungalow-shed-gallery/402383_335287073149123_162319869_n.jpg',
+    G + 'bungalow-shed-gallery/405225_335286283149202_98032605_n.jpg',
+    G + 'bungalow-shed-gallery/20130423_164055.jpg',
+    G + 'bungalow-shed-gallery/20130425_181514.jpg'
+  ],
+  'country-inn': [
+    G + 'country-inn/1.jpg',
+    G + 'country-inn/2.jpg',
+    G + 'country-inn/8X12-With-Porch.JPG',
+    G + 'country-inn/8X12-With-Porch-2.JPG',
+    G + 'country-inn/12X18-Country-Inn.jpg'
+  ],
+  'cabana': [
+    G + 'cabana-shed/10X16-Cabana.jpg',
+    G + 'cabana-shed/10X16-Cabana-Yellow.jpg',
+    G + 'cabana-shed/12X14-Cabana.jpg',
+    G + 'cabana-shed/12X14-Cabana-Hardi-Painted.jpg',
+    G + 'cabana-shed/12X16-Cabana-Yellow.jpg'
+  ],
+  'double-wide': [
+    G + 'double-wide/20X24-Double-Wide.jpg',
+    G + 'double-wide/20x20-Cabana.jpg',
+    G + 'double-wide/20X20-Dbl-Wide-Country-Inn-Hardi.JPG',
+    G + 'double-wide/20X24-Double-Wide-With-Optional-Garage-Door.jpg'
+  ],
+  'gazebos': [
+    G + 'gazebos/10-X-16-1.jpg',
+    G + 'gazebos/10-X-16-2.jpg',
+    G + 'gazebos/10-X-16-3.jpg',
+    G + 'gazebos/10-X-16-4.jpg',
+    G + 'gazebos/3620904_orig.jpg'
+  ],
+  'carports': [
+    G + 'carports/1-Carolina-20x21x8-boxed.JPG',
+    G + 'carports/1-Longwood-24x21x9-Vertical.JPG',
+    G + 'carports/2-car-carports.jpg',
+    G + 'carports/2-carport-metal.jpg',
+    G + 'carports/2-Longwood-24x21x9-Vertical.JPG'
+  ]
+};
+const photosOf = (slug) => PHOTOS[slug] || [DEMO_IMG];
+
+const PRODUCTS = [
+  { slug: 'bungalow', cat: 'Aluminum shed', catEs: 'Shed de aluminio', name: 'The Bungalow', base: 3295, rate: 26,
+    short: 'Classic gable roof', shortEs: 'Techo a dos aguas clásico',
+    blurb: 'Classic gable roof, lap-sided aluminum with a baked-on enamel finish. Minimal maintenance, built to look factory-fresh for decades.',
+    blurbEs: 'Techo a dos aguas clásico, aluminio con acabado en esmalte horneado. Mantenimiento mínimo y aspecto de fábrica por décadas.',
+    widths: [6, 8, 10, 12, 14],
+    sizes: ['6×8','6×10','6×12','8×10','8×12','8×16','10×12','10×16','10×20','12×16','12×24','14×28'],
+    quick: [['Widths','6′–14′'],['Lengths','to 40′'],['Wind load','170 MPH'],['Floor load','75 psf']],
+    specs: [
+      ['Sizes available','6′, 8′, 10′, 12′, 14′ widths — lengths to 40′'],
+      ['Truss system','Manufactured 2″×4″ trusses, press plates, hurricane straps, approx. 24″ centers'],
+      ['Skids / floor joists','4″×4″ pressure treated skids; 2″×6″ PT floor joists with Simpson hurricane fastening, 16″–24″ centers'],
+      ['Decking','3/4″ tongue & groove Sturdi-Floor (treated) or Advantech, optional gray acrylic deck paint'],
+      ['Siding','24″ lap siding, aluminum, baked enamel finish'],
+      ['Wind load','170 MPH per Florida Standard Building Code ASCE7-98, 3-second gusts'],
+      ['Floor load','75 lbs per sq ft; optional 125 lbs per sq ft'],
+      ['State approval','Florida State approved and inspected; insignia and data plate in every building (FL Statute 553.37)'],
+      ['Permits','Local municipalities require permits — Superior guides the homeowner through the whole process'],
+      ['Options','Entry doors, garage doors, windows, vents, ramps and electrical packages']
+    ] },
+  { slug: 'country-inn', cat: 'Aluminum shed', catEs: 'Shed de aluminio', name: 'Country Inn', base: 3890, rate: 29,
+    short: 'Steeper roof, cottage look', shortEs: 'Techo alto, estilo cottage',
+    blurb: 'A steeper roofline and cottage proportions that read as part of the house, not a box in the yard. The one to pick when curb appeal matters.',
+    blurbEs: 'Techo más pronunciado y proporciones de cottage: se ve parte de la casa, no una caja en el patio. La opción cuando importa la estética.',
+    widths: [8, 10, 12, 14],
+    sizes: ['8×10','8×12','8×16','10×12','10×16','10×20','12×16','12×20','12×24','14×24','14×30','14×40'],
+    quick: [['Widths','8′–14′'],['Lengths','to 40′'],['Wind load','170 MPH'],['Roof','High-pitch gable']],
+    specs: [
+      ['Sizes available','8′, 10′, 12′, 14′ widths — lengths to 40′'],
+      ['Roof','High-pitch gable with optional Floridian eave'],
+      ['Truss system','Manufactured 2″×4″ trusses, press plates, hurricane straps, approx. 24″ centers'],
+      ['Siding','24″ lap siding, aluminum, baked enamel finish'],
+      ['Decking','3/4″ tongue & groove treated decking'],
+      ['Wind load','170 MPH, ASCE7-98 3-second gusts'],
+      ['Floor load','75 lbs per sq ft; optional 125 lbs per sq ft'],
+      ['State approval','Florida State approved and inspected; data plate in every building'],
+      ['Permits','Permit package and engineered drawings provided'],
+      ['Options','Dormers, windows, shutters, ramps, electrical']
+    ] },
+  { slug: 'cabana', cat: 'Aluminum shed', catEs: 'Shed de aluminio', name: 'Cabana', base: 3590, rate: 27,
+    short: 'Pool & patio favorite', shortEs: 'Favorito de piscina y patio',
+    blurb: 'Low-profile roof designed to sit beside a pool deck. Wide door options, easy to finish inside as a changing room, bar or workshop.',
+    blurbEs: 'Techo de perfil bajo pensado para el borde de la piscina. Puertas anchas y fácil de terminar por dentro como vestidor, bar o taller.',
+    widths: [6, 8, 10, 12],
+    sizes: ['6×8','6×10','8×8','8×10','8×12','8×16','10×12','10×16','10×20','12×16','12×20','12×24'],
+    quick: [['Widths','6′–12′'],['Lengths','to 24′'],['Wind load','170 MPH'],['Roof','Low-profile']],
+    specs: [
+      ['Sizes available','6′, 8′, 10′, 12′ widths — lengths to 24′'],
+      ['Roof','Low-profile hip / gable format'],
+      ['Truss system','Manufactured 2″×4″ trusses with hurricane straps'],
+      ['Siding','24″ lap siding, aluminum, baked enamel finish'],
+      ['Decking','3/4″ tongue & groove treated decking'],
+      ['Wind load','170 MPH, ASCE7-98 3-second gusts'],
+      ['Floor load','75 lbs per sq ft; optional 125 lbs per sq ft'],
+      ['State approval','Florida State approved and inspected'],
+      ['Permits','Superior handles the permit paperwork with you'],
+      ['Options','Double doors, screened openings, windows, electrical']
+    ] },
+  { slug: 'double-wide', cat: 'Garage & workshop', catEs: 'Garaje y taller', name: 'Double Wide', base: 6950, rate: 24,
+    short: 'Garage-grade footprint', shortEs: 'Tamaño de garaje',
+    blurb: 'Two units joined into one clear-span footprint. Garage doors, higher sidewalls, room for a truck, a boat, or a real workshop.',
+    blurbEs: 'Dos módulos unidos en una sola huella. Puertas de garaje, paredes más altas, espacio para camioneta, bote o un taller de verdad.',
+    widths: [20, 24, 28],
+    sizes: ['20×20','20×24','20×30','24×24','24×30','24×36','24×40','28×30','28×36','28×40'],
+    quick: [['Widths','20′–28′'],['Lengths','to 40′'],['Sidewall','to 84″'],['Wind load','170 MPH']],
+    specs: [
+      ['Sizes available','20′, 24′, 28′ widths — lengths to 40′'],
+      ['Sidewall height','Raised to 84″ maximum for garage doors or higher entry'],
+      ['Truss system','Engineered trusses with press plates and hurricane strapping'],
+      ['Siding','24″ lap siding, aluminum, baked enamel finish'],
+      ['Decking','3/4″ tongue & groove Advantech decking'],
+      ['Wind load','170 MPH, ASCE7-98 3-second gusts'],
+      ['Floor load','75 lbs per sq ft; optional 125 lbs per sq ft'],
+      ['State approval','Florida State approved and inspected'],
+      ['Permits','Engineered drawings and approval letter provided on purchase'],
+      ['Options','Roll-up and overhead garage doors, ramps, windows, electrical package']
+    ] },
+  { slug: 'gazebos', cat: 'Outdoor living', catEs: 'Vida al aire libre', name: 'Gazebos', base: 4450, rate: 42,
+    short: 'Square, oblong, octagon', shortEs: 'Cuadrado, ovalado, octagonal',
+    blurb: 'Pressure treated Southern Yellow Pine, delivered fully assembled on skids. Metal, shingle or cedar roof — screen it in to beat the bugs.',
+    blurbEs: 'Pino amarillo del sur tratado a presión, entregado armado sobre patines. Techo metálico, shingle o cedro — con mosquitero opcional.',
+    widths: [8, 10],
+    sizes: ['8×8','8×10','8×12','10×10','10×12','10×14','10×16','10×20'],
+    quick: [['Shapes','Square / oblong / octagon'],['Sizes','8×8 – 10×20'],['Wind load','150 MPH'],['Lumber','PT Southern Yellow Pine']],
+    specs: [
+      ['Most popular sizes','8×8, 8×10, 8×12, 10×10, 10×12, 10×14, 10×16, 10×20 — custom sizes on request'],
+      ['Lumber','Pressure Treated Southern Yellow Pine (non-arsenic treating)'],
+      ['Roof options','Metal, shingles or cedar'],
+      ['Finish','Sealed or painted; multiple wood stains'],
+      ['Delivery','Transportable, fully assembled on skids'],
+      ['Wind load','Rated to 150 MPH, ASCE7-98 3-second gusts'],
+      ['Code','Manufactured to meet Florida Building Code'],
+      ['Permitting','Sealed drawings issued for permitting'],
+      ['Installation','Blocked and anchored to Florida code by Superior installers'],
+      ['Options','Screening, bench seating, railing styles, roof shapes']
+    ] },
+  { slug: 'carports', cat: 'Steel structures', catEs: 'Estructuras de acero', name: 'Carports & Steel', base: 1295, rate: 14,
+    short: 'Cover a car, RV or crew', shortEs: 'Cubre auto, RV o equipo',
+    blurb: 'Galvanized steel frames for carports, RV covers and fully enclosed steel buildings. The fastest, lowest-cost way to get cover on site.',
+    blurbEs: 'Estructuras de acero galvanizado para carports, cubiertas de RV y edificios cerrados. La forma más rápida y económica de cubrir.',
+    widths: [12, 18, 24, 30],
+    sizes: ['12×21','12×26','18×21','18×26','18×31','20×26','24×31','24×41','30×41','30×51'],
+    quick: [['Widths','12′–30′'],['Lengths','to 51′'],['Frame','Galvanized steel'],['Use','Open / enclosed']],
+    specs: [
+      ['Sizes available','12′ to 30′ widths — lengths to 51′ and beyond on request'],
+      ['Frame','Galvanized steel tubing, certified engineering available'],
+      ['Panels','29-gauge painted steel roof and side panels'],
+      ['Anchoring','Ground, asphalt or concrete anchors to Florida code'],
+      ['Wind rating','Certified units available to local wind requirements'],
+      ['Configurations','Open carport, partially enclosed, fully enclosed garage, RV cover'],
+      ['Permits','Certified drawings available for permitting'],
+      ['Install','Installed on a level site by Superior crews'],
+      ['Lead time','Typically the fastest product to deliver'],
+      ['Options','Walk doors, roll-up doors, windows, extra bracing']
+    ] }
+];
+
+const OPTIONS = [
+  { id: 'garage', label: 'Garage door', labelEs: 'Puerta de garaje', price: 1450 },
+  { id: 'windows', label: 'Windows (2)', labelEs: 'Ventanas (2)', price: 420 },
+  { id: 'ramp', label: 'Ramp', labelEs: 'Rampa', price: 340 },
+  { id: 'electrical', label: 'Electrical package', labelEs: 'Paquete eléctrico', price: 890 },
+  { id: 'shelving', label: 'Shelving', labelEs: 'Estantería', price: 260 },
+  { id: 'floor125', label: '125 psf floor', labelEs: 'Piso 125 psf', price: 510 }
+];
+
+const I18N = {
+  en: {
+    navProducts: 'Products', navLocations: 'Locations', navGallery: 'Gallery', navFinancing: 'Financing',
+    getQuote: 'Get a quote', heroKicker: 'Florida built since 1998',
+    heroTitle: 'Buildings that outlast the storm.',
+    heroSub: 'Sheds, garages, gazebos and steel structures, prefabricated in Orange City and rated to 170 MPH. Priced in minutes, permitted for you, delivered to your slab.',
+    heroCta: 'Build my quote', heroCta2: 'Call 877-439-7433',
+    pickTitle: 'Six ways to get the space you need.',
+    pickSub: 'Every model is state approved, inspected before it leaves the plant, and quoted with the permit work included. Pick the shape — we handle the paperwork.',
+    explore: 'Explore model', quoteThis: 'Quote this model', specsLabel: 'Quick specs',
+    whyTitle: 'Why people stop shopping after Superior.',
+    whySub: 'Twenty-five years of Florida building code, one factory, one crew, one number to call when you need service.',
+    startQuote: 'Start my quote',
+    finKicker: 'Financing', finTitle: 'Pay over time.',
+    finBody: 'Rent-to-own and financing options let you take delivery now and pay monthly. Ask your rep which plan fits your budget when you request the quote.',
+    finCta: 'See my options',
+    areaTitle: 'Delivered across Florida.', areaCta: 'All locations',
+    backHome: 'All products', callNow: 'Call now', configure: 'Configure',
+    pickSize: 'Pick your footprint', pickSizeNote: 'Widths are measured eave to eave — interior width may be slightly less.',
+    addOns: 'Add options', yourBuild: 'Your build', estimate: 'Estimated range',
+    estimateNote: 'Placeholder pricing for layout — replace with the client\u2019s real price table. Final price confirmed by your rep.',
+    lockQuote: 'Send this build', call: 'Call', email: 'Email',
+    fullSpecs: 'Full specifications',
+    ctaTitle: 'Get a real number today.', ctaSub: 'Tell us the size and zip code — you get pricing, delivery window and permit requirements back the same day.',
+    seeOther: 'See other models',
+    locTitle: 'Built here. Delivered statewide.',
+    locSub: 'Our plant and main yard are in Orange City. Delivery and installation crews cover the whole state — enter your zip and we will confirm your window.',
+    zipPlaceholder: 'Your ZIP code', checkZip: 'Check my area', hq: 'Plant & main yard',
+    footBlurb: 'Prefabricated sheds, garages, gazebos and steel buildings, manufactured in Orange City, Florida and approved statewide.',
+    company: 'Company', contact: 'Contact',
+    approvals: 'Florida DCA / DBPR approved · Rated to 170 MPH',
+    quoteIn60: 'Get a quote', orCall: 'or call',
+    freeQuote: 'Free · no obligation', quoteHead: 'Build your quote',
+    fProduct: 'Which building', fSize: 'Size', fOptions: 'Options', fWhen: 'When do you need it',
+    fContact: 'Where do we send it', fName: 'Full name', fPhone: 'Phone', fEmail: 'Email',
+    fZip: 'Delivery ZIP code', fNotes: 'Anything else we should know?',
+    sendQuote: 'Send my quote request',
+    formNote: 'We reply within one business day. No credit check to ask.',
+    sentTitle: 'Request received.', sentBody: 'A Superior rep will call you with pricing, delivery window and permit details within one business day.'
+  },
+  es: {
+    navProducts: 'Productos', navLocations: 'Ubicaciones', navGallery: 'Galería', navFinancing: 'Financiamiento',
+    getQuote: 'Cotizar', heroKicker: 'Hecho en Florida desde 1998',
+    heroTitle: 'Estructuras que aguantan la tormenta.',
+    heroSub: 'Sheds, garajes, gazebos y estructuras de acero prefabricados en Orange City y certificados a 170 MPH. Cotización en minutos, permisos incluidos, entrega en tu terreno.',
+    heroCta: 'Armar mi cotización', heroCta2: 'Llama 877-439-7433',
+    pickTitle: 'Seis maneras de tener el espacio que necesitas.',
+    pickSub: 'Cada modelo está aprobado por el estado, inspeccionado antes de salir de planta y cotizado con el trámite de permisos incluido. Tú eliges la forma; nosotros el papeleo.',
+    explore: 'Ver modelo', quoteThis: 'Cotizar este modelo', specsLabel: 'Ficha rápida',
+    whyTitle: 'Por qué dejan de buscar después de Superior.',
+    whySub: 'Veinticinco años de código de construcción de Florida, una fábrica, un equipo y un solo número al que llamar.',
+    startQuote: 'Empezar cotización',
+    finKicker: 'Financiamiento', finTitle: 'Paga a plazos.',
+    finBody: 'Opciones de renta con opción a compra y financiamiento: recibe tu estructura ahora y paga mensual. Pregunta a tu asesor cuál plan te conviene.',
+    finCta: 'Ver opciones',
+    areaTitle: 'Entregamos en toda Florida.', areaCta: 'Todas las ubicaciones',
+    backHome: 'Todos los productos', callNow: 'Llamar ahora', configure: 'Configura',
+    pickSize: 'Elige tu medida', pickSizeNote: 'Los anchos se miden de alero a alero; el interior puede ser un poco menor.',
+    addOns: 'Agrega opciones', yourBuild: 'Tu configuración', estimate: 'Rango estimado',
+    estimateNote: 'Precios de ejemplo para el layout — reemplazar con la tabla real del cliente. El precio final lo confirma tu asesor.',
+    lockQuote: 'Enviar esta configuración', call: 'Llamar', email: 'Correo',
+    fullSpecs: 'Especificaciones completas',
+    ctaTitle: 'Ten un número real hoy.', ctaSub: 'Dinos la medida y tu código postal: el mismo día recibes precio, fecha de entrega y requisitos de permiso.',
+    seeOther: 'Ver otros modelos',
+    locTitle: 'Fabricado aquí. Entregado en todo el estado.',
+    locSub: 'Nuestra planta y patio principal están en Orange City. Los equipos de entrega e instalación cubren todo el estado: pon tu código postal y confirmamos tu fecha.',
+    zipPlaceholder: 'Tu código postal', checkZip: 'Revisar mi zona', hq: 'Planta y patio principal',
+    footBlurb: 'Sheds, garajes, gazebos y edificios de acero prefabricados en Orange City, Florida y aprobados en todo el estado.',
+    company: 'Compañía', contact: 'Contacto',
+    approvals: 'Aprobado por Florida DCA / DBPR · Certificado a 170 MPH',
+    quoteIn60: 'Cotizar', orCall: 'o llama',
+    freeQuote: 'Gratis · sin compromiso', quoteHead: 'Arma tu cotización',
+    fProduct: 'Qué estructura', fSize: 'Medida', fOptions: 'Opciones', fWhen: 'Para cuándo la necesitas',
+    fContact: 'A dónde te la enviamos', fName: 'Nombre completo', fPhone: 'Teléfono', fEmail: 'Correo',
+    fZip: 'Código postal de entrega', fNotes: '¿Algo más que debamos saber?',
+    sendQuote: 'Enviar mi solicitud',
+    formNote: 'Respondemos en un día hábil. Preguntar no requiere revisión de crédito.',
+    sentTitle: 'Solicitud recibida.', sentBody: 'Un asesor de Superior te llamará con precio, fecha de entrega y detalles de permisos en un día hábil.'
+  }
+};
+
+const TRUST = {
+  en: ['170 MPH rated', '100,000+ buildings delivered', '25+ years in Florida', 'Permitting handled for you', 'Manufactured in Orange City, FL', 'Installation included'],
+  es: ['Certificado 170 MPH', '100,000+ estructuras entregadas', '25+ años en Florida', 'Permisos gestionados por nosotros', 'Fabricado en Orange City, FL', 'Instalación incluida']
+};
+
+const WHY = {
+  en: [
+    ['01', 'Built in a plant, not a driveway', 'Every phase is inspected before your building leaves Orange City, so nothing gets improvised on your property.'],
+    ['02', 'Permits are our job', 'We hand you sealed engineered drawings and walk your municipality\u2019s process with you.'],
+    ['03', '170 MPH and a data plate to prove it', 'Florida DCA / DBPR insignia in every building — inspectors and insurers stop asking questions.'],
+    ['04', 'One number for service, forever', 'Same factory, same crews. Service requests go to the people who built it.']
+  ],
+  es: [
+    ['01', 'Hecho en planta, no en el patio', 'Cada fase se inspecciona antes de salir de Orange City: nada se improvisa en tu propiedad.'],
+    ['02', 'Los permisos son nuestro trabajo', 'Te entregamos planos sellados y te acompañamos en el trámite con tu municipio.'],
+    ['03', '170 MPH con placa que lo comprueba', 'Insignia de Florida DCA / DBPR en cada estructura: inspectores y aseguradoras dejan de preguntar.'],
+    ['04', 'Un solo número para servicio, siempre', 'Misma fábrica, mismos equipos. El servicio lo atiende quien la construyó.']
+  ]
+};
+
+const REGIONS = {
+  en: [
+    ['Central Florida', 'Orlando · Deltona · Sanford · Ocala'],
+    ['North Florida', 'Jacksonville · Gainesville · St. Augustine'],
+    ['Tampa Bay', 'Tampa · St. Petersburg · Brandon · Lakeland'],
+    ['South & Gulf', 'Fort Myers · Naples · Port St. Lucie · Palm Beach']
+  ],
+  es: [
+    ['Florida Central', 'Orlando · Deltona · Sanford · Ocala'],
+    ['Norte de Florida', 'Jacksonville · Gainesville · St. Augustine'],
+    ['Tampa Bay', 'Tampa · St. Petersburg · Brandon · Lakeland'],
+    ['Sur y Golfo', 'Fort Myers · Naples · Port St. Lucie · Palm Beach']
+  ]
+};
+
+const FOOTER = {
+  en: ['About us', 'Delivery', 'Financing', 'Government / major accounts', 'Become a dealer', 'FAQ', 'Order status', 'Service request'],
+  es: ['Nosotros', 'Entrega', 'Financiamiento', 'Gobierno / cuentas mayores', 'Ser distribuidor', 'Preguntas frecuentes', 'Estado de orden', 'Solicitud de servicio']
+};
+
+const TIMELINE = {
+  en: ['ASAP', 'Next 30 days', '1–3 months', 'Just researching'],
+  es: ['Lo antes posible', 'Próximos 30 días', '1–3 meses', 'Solo investigando']
+};
+
+class Component extends DCLogic {
+  state = {
+    lang: (this.props && this.props.startLang === 'Español') ? 'es' : 'en', route: 'home', slug: 'bungalow', menuOpen: false,
+    size: '8×12', options: ['windows'], quoteOpen: false, quoteSent: false,
+    qProduct: 'bungalow', qSize: '8×12', qTimeline: 0,
+    qName: '', qPhone: '', qEmail: '', qZip: '', qNotes: '', zip: '', zipChecked: false
+  };
+
+  componentDidMount() {
+    if (this.props.motion === false) { document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-reveal', 'in')); return; }
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.setAttribute('data-reveal', 'in'); this.io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    this.scan = () => document.querySelectorAll('[data-reveal]:not([data-reveal="in"])').forEach((el) => this.io.observe(el));
+    this.scan();
+    this.timer = setInterval(this.scan, 900);
+  }
+  componentWillUnmount() { clearInterval(this.timer); if (this.io) this.io.disconnect(); }
+
+  L() { return this.state.lang === 'es' ? 'es' : 'en'; }
+  money(n) { return '$' + Math.round(n / 5) * 5 + ''; }
+  sqft(size) { const p = String(size).split('×').map(Number); return (p[0] || 8) * (p[1] || 10); }
+  prod(slug) { return PRODUCTS.find((p) => p.slug === slug) || PRODUCTS[0]; }
+
+  priceFor(slug, size, opts) {
+    const p = this.prod(slug);
+    const base = p.base + this.sqft(size) * p.rate;
+    const add = OPTIONS.filter((o) => opts.includes(o.id)).reduce((s, o) => s + o.price, 0);
+    return base + add;
+  }
+
+  go(slug) { this.setState({ route: 'product', slug, menuOpen: false, size: this.prod(slug).sizes[3] || this.prod(slug).sizes[0], options: [] }); window.scrollTo(0, 0); }
+  openQuoteWith(slug) {
+    const p = this.prod(slug || this.state.qProduct);
+    this.setState({ quoteOpen: true, quoteSent: false, qProduct: p.slug, qSize: this.state.route === 'product' && slug === this.state.slug ? this.state.size : (p.sizes[3] || p.sizes[0]), menuOpen: false });
+  }
+
+  bindHeroVideo(el) {
+    if (!el || el === this._hv) return;
+    this._hv = el;
+    if (this._hvStop) this._hvStop();
+
+    el.muted = true;
+    el.defaultMuted = true;
+    el.setAttribute('muted', 'muted');
+    el.playsInline = true;
+    el.loop = true;
+
+    let done = false;
+    const attempt = () => {
+      if (done || !el.isConnected) return;
+      const p = el.play();
+      if (p && p.then) {
+        p.then(() => {
+          // some engines resolve play() but immediately re-pause at t=0
+          setTimeout(() => { if (!el.paused && el.currentTime > 0) { done = true; cleanup(); } }, 250);
+        }).catch(() => {});
+      }
+    };
+
+    const events = ['loadeddata', 'canplay', 'canplaythrough', 'suspend', 'pause', 'stalled'];
+    events.forEach((n) => el.addEventListener(n, attempt));
+
+    const onGesture = () => attempt();
+    ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((n) =>
+      window.addEventListener(n, onGesture, { passive: true })
+    );
+
+    let io = null;
+    if (typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) attempt(); });
+      });
+      io.observe(el);
+    }
+
+    const ticker = setInterval(() => {
+      if (done || !el.isConnected) return;
+      if (el.paused || el.currentTime === 0) attempt(); else { done = true; cleanup(); }
+    }, 700);
+
+    const cleanup = () => {
+      clearInterval(ticker);
+      events.forEach((n) => el.removeEventListener(n, attempt));
+      ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((n) => window.removeEventListener(n, onGesture));
+      if (io) io.disconnect();
+    };
+    this._hvStop = cleanup;
+
+    // stop retrying after 12s; the poster/photo underneath carries the hero
+    setTimeout(() => { if (!done) cleanup(); }, 12000);
+    attempt();
+  }
+
+  componentWillUnmount() {
+    if (this._hvStop) this._hvStop();
+  }
+
+  renderVals() {
+    const L = this.L(), t = I18N[L], st = this.state;
+    const es = L === 'es';
+    const cur = this.prod(st.slug);
+    const showPrices = this.props.showPrices ?? true;
+    const labelOf = (p) => (es ? { 'The Bungalow': 'El Bungalow', 'Country Inn': 'Country Inn', 'Cabana': 'Cabana', 'Double Wide': 'Doble Ancho', 'Gazebos': 'Gazebos', 'Carports & Steel': 'Carports y Acero' }[p.name] || p.name : p.name);
+
+    const products = PRODUCTS.map((p) => ({
+      slug: p.slug, name: labelOf(p), short: es ? p.shortEs : p.short,
+      category: es ? p.catEs : p.cat, blurb: es ? p.blurbEs : p.blurb,
+      priceFrom: showPrices ? (es ? 'Desde ' : 'From ') + '$' + p.base.toLocaleString() : (es ? 'Cotizar' : 'Quote'),
+      priceLabel: showPrices ? (es ? 'Desde ' : 'From ') + '$' + p.base.toLocaleString() : '',
+      quickSpecs: p.quick.map(([k, v]) => ({ k, v })),
+      homeSlot: 'home-' + p.slug, menuSlot: 'menu-' + p.slug, pageSlot: 'page-' + p.slug,
+      photo: photosOf(p.slug)[0],
+      slotHint: (es ? 'Foto full-bleed: ' : 'Full-bleed photo: ') + p.name,
+      go: () => this.go(p.slug), quote: () => this.openQuoteWith(p.slug)
+    }));
+
+    const chipStyle = (on) => on
+      ? { border: '#3D97E8', bg: 'rgba(61,151,232,.14)', fg: '#3D97E8' }
+      : { border: 'rgba(245,243,239,.18)', bg: '#101319', fg: '#D3D5D9' };
+
+    const activeSlug = st.quoteOpen ? st.qProduct : st.slug;
+    const activeSize = st.quoteOpen ? st.qSize : st.size;
+    const price = this.priceFor(activeSlug, activeSize, st.options);
+    const low = Math.round(price * 0.95 / 50) * 50, high = Math.round(price * 1.12 / 50) * 50;
+
+    const product = {
+      name: labelOf(cur), category: es ? cur.catEs : cur.cat, blurb: es ? cur.blurbEs : cur.blurb,
+      pageSlot: 'page-' + cur.slug, slotHint: (es ? 'Foto full-bleed: ' : 'Full-bleed photo: ') + cur.name,
+      specs: cur.specs.map(([k, v]) => ({ k, v })),
+      photo: photosOf(cur.slug)[0],
+      gallery: photosOf(cur.slug).map((src, i) => ({ src, slot: 'gal-' + cur.slug + '-' + (i + 1), hint: (es ? 'Galería ' : 'Gallery ') + (i + 1) }))
+    };
+
+    return {
+      t, products, product,
+      demoImg: DEMO_IMG,
+      heroVideo: (el) => this.bindHeroVideo(el),
+      isHome: st.route === 'home', isProduct: st.route === 'product', isLocations: st.route === 'locations',
+      menuOpen: st.menuOpen,
+      openMenu: () => this.setState({ menuOpen: true }), closeMenu: () => this.setState({ menuOpen: false }),
+      goHome: () => { this.setState({ route: 'home', menuOpen: false }); window.scrollTo(0, 0); },
+      goLocations: () => { this.setState({ route: 'locations', menuOpen: false }); window.scrollTo(0, 0); },
+      goOther: () => { this.setState({ route: 'home' }); window.scrollTo(0, 0); },
+      toggleLang: () => this.setState({ lang: es ? 'en' : 'es' }),
+      enBg: es ? 'transparent' : '#F5F3EF', enFg: es ? '#9CA0A7' : '#0A0C11',
+      esBg: es ? '#F5F3EF' : 'transparent', esFg: es ? '#0A0C11' : '#9CA0A7',
+
+      trustLoop: TRUST[L].concat(TRUST[L]).map((label) => ({ label })),
+      whyItems: WHY[L].map(([n, title, body]) => ({ n, title, body })),
+      regions: REGIONS[L].map(([name, cities]) => ({ name, cities })),
+      footerLinks: FOOTER[L].map((label) => ({ label })),
+
+      sizeOptions: cur.sizes.map((label) => {
+        const s = chipStyle(label === st.size);
+        return { label, border: s.border, bg: s.bg, fg: s.fg, pick: () => this.setState({ size: label }) };
+      }),
+      optionChips: OPTIONS.map((o) => {
+        const on = st.options.includes(o.id), s = chipStyle(on);
+        return {
+          label: es ? o.labelEs : o.label, border: s.border, bg: s.bg, fg: s.fg,
+          toggle: () => this.setState((p) => ({ options: on ? p.options.filter((x) => x !== o.id) : p.options.concat(o.id) }))
+        };
+      }),
+      selectedOptionList: OPTIONS.filter((o) => st.options.includes(o.id)).map((o) => ({ label: es ? o.labelEs : o.label, priceLabel: '+$' + o.price.toLocaleString() })),
+      buildTitle: labelOf(cur) + ' · ' + st.size + '′',
+      buildFootprint: this.sqft(st.size) + (es ? ' pies² · ' : ' sq ft · ') + (es ? 'entrega e instalación incluidas' : 'delivery & install included'),
+      estimate: showPrices ? '$' + low.toLocaleString() + '–' + high.toLocaleString() : (es ? 'A consultar' : 'On request'),
+
+      quoteOpen: st.quoteOpen, quoteSent: st.quoteSent, quoteForm: !st.quoteSent,
+      openQuote: () => this.openQuoteWith(null),
+      quoteCurrent: () => this.openQuoteWith(cur.slug),
+      closeQuote: () => this.setState({ quoteOpen: false }),
+      quoteProducts: PRODUCTS.map((p) => {
+        const s = chipStyle(p.slug === st.qProduct);
+        return { name: labelOf(p), border: s.border, bg: s.bg, fg: s.fg, pick: () => this.setState({ qProduct: p.slug, qSize: p.sizes[3] || p.sizes[0] }) };
+      }),
+      quoteSizes: this.prod(st.qProduct).sizes.map((label) => ({ label })),
+      timelineChips: TIMELINE[L].map((label, i) => {
+        const s = chipStyle(i === st.qTimeline);
+        return { label, border: s.border, bg: s.bg, fg: s.fg, pick: () => this.setState({ qTimeline: i }) };
+      }),
+      qSize: st.qSize, qName: st.qName, qPhone: st.qPhone, qEmail: st.qEmail, qZip: st.qZip, qNotes: st.qNotes,
+      onQSize: (e) => this.setState({ qSize: e.target.value }),
+      onQName: (e) => this.setState({ qName: e.target.value }),
+      onQPhone: (e) => this.setState({ qPhone: e.target.value }),
+      onQEmail: (e) => this.setState({ qEmail: e.target.value }),
+      onQZip: (e) => this.setState({ qZip: e.target.value }),
+      onQNotes: (e) => this.setState({ qNotes: e.target.value }),
+      submitQuote: () => this.setState({ quoteSent: true }),
+
+      zip: st.zip, zipChecked: st.zipChecked,
+      onZip: (e) => this.setState({ zip: e.target.value, zipChecked: false }),
+      checkZip: () => this.setState({ zipChecked: true }),
+      zipMessage: es
+        ? 'Sí entregamos e instalamos en ' + (st.zip || 'tu zona') + '. Ventana típica: 3–5 semanas desde la aprobación del permiso.'
+        : 'We deliver and install in ' + (st.zip || 'your area') + '. Typical window: 3–5 weeks from permit approval.'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
-import { Button } from '@/components/ui/button'
+import { CtaButton } from '@/components/CtaButton'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
@@ -151,9 +151,9 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
+              <CtaButton form={formID} type="submit" variant="default">
                 {submitButtonLabel}
-              </Button>
+              </CtaButton>
             </form>
           )}
         </FormProvider>

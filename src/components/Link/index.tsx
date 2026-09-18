@@ -1,9 +1,10 @@
 import { Button, type ButtonProps } from '@/components/ui/button'
+import { ctaClassName } from '@/components/ctaClassName'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, Post } from '@/payload-types'
+import type { Page } from '@/payload-types'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
@@ -12,8 +13,8 @@ type CMSLinkType = {
   label?: string | null
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
+    relationTo: 'pages'
+    value: Page | string | number
   } | null
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
@@ -35,9 +36,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
+      ? `/${reference.value.slug}`
       : url
 
   if (!href) return null
@@ -55,8 +54,15 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     )
   }
 
+  const isCta = appearance === 'default' || appearance === 'outline' || appearance === 'secondary'
+
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
+    <Button
+      asChild
+      className={cn(isCta && ctaClassName, className)}
+      size={size}
+      variant={appearance}
+    >
       <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
         {label && label}
         {children && children}

@@ -1,41 +1,47 @@
 'use client'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import type { Header } from '@/payload-types'
+import type { Locale } from '@/i18n/config'
+import { localizedHref } from '@/i18n/config'
+import type { Header, Product } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
+import { useHeaderTheme } from '@/providers/HeaderTheme'
+
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
   data: Header
+  locale: Locale
+  products: Product[]
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
-  /* Storing the value in a useState to avoid hydration errors */
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale, products }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
 
   useEffect(() => {
     setHeaderTheme(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, setHeaderTheme])
 
   useEffect(() => {
     if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headerTheme])
+  }, [headerTheme, theme])
 
   return (
-    <header className="container relative z-20   " {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo loading="eager" priority="high" className="invert dark:invert-0" />
+    <header
+      className="sticky top-0 z-30 h-[var(--header-height)] border-b border-border/80 bg-background/90 backdrop-blur-md"
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="container h-full flex justify-between items-center gap-4">
+        <Link href={localizedHref('/', locale)}>
+          <Logo loading="eager" priority="high" />
         </Link>
-        <HeaderNav data={data} />
+        <HeaderNav data={data} locale={locale} products={products} />
       </div>
     </header>
   )

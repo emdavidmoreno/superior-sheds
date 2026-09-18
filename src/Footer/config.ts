@@ -10,19 +10,28 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
-      name: 'navItems',
+      name: 'companyLinks',
       type: 'array',
       fields: [
         link({
           appearances: false,
         }),
       ],
-      maxRows: 6,
+      maxRows: 12,
       admin: {
         initCollapsed: true,
         components: {
           RowLabel: '@/Footer/RowLabel#RowLabel',
         },
+      },
+    },
+    {
+      name: 'productLinks',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      admin: {
+        description: 'Products listed in the footer (order preserved).',
       },
     },
   ],

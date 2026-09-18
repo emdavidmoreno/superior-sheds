@@ -51,4 +51,13 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+const config = withPayload(nextConfig, { devBundleServerPackages: false })
+
+// Payload opts out of Turbopack server Fast Refresh because it breaks admin HMR.
+// Next.js lists `experimental.turbopackServerFastRefresh` at startup, so we
+// strip it here and disable the same behavior with `--no-server-fast-refresh`.
+if (config.experimental) {
+  delete config.experimental.turbopackServerFastRefresh
+}
+
+export default config

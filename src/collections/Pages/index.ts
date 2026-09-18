@@ -2,11 +2,18 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
+import { FaqList } from '../../blocks/FaqList/config'
+import { FinancingBand } from '../../blocks/FinancingBand/config'
 import { FormBlock } from '../../blocks/Form/config'
+import { GalleryGrid } from '../../blocks/GalleryGrid/config'
+import { HeroVideo } from '../../blocks/HeroVideo/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { ProductShowcase } from '../../blocks/ProductShowcase/config'
+import { RegionGrid } from '../../blocks/RegionGrid/config'
+import { TrustMarquee } from '../../blocks/TrustMarquee/config'
+import { WhyGrid } from '../../blocks/WhyGrid/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -59,6 +66,7 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       type: 'tabs',
@@ -72,7 +80,21 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              localized: true,
+              blocks: [
+                HeroVideo,
+                TrustMarquee,
+                ProductShowcase,
+                WhyGrid,
+                FinancingBand,
+                RegionGrid,
+                GalleryGrid,
+                FaqList,
+                CallToAction,
+                Content,
+                MediaBlock,
+                FormBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,
